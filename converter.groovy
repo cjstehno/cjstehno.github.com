@@ -9,20 +9,41 @@ xml.declareNamespace( wp:'http://wordpress.org/export/1.1/', content:'http://pur
 
 println 'Starting...'
 
+def postPaths = []
+
 xml.channel[0].item.each { item->
 	def postType = item.'wp:post_type'.text()
 	if( postType == 'attachment' ){
 		handleAttachment item, assetDir
 		
 	} else if( postType == 'post' ){
-		handlePost item, postDir
+		postPaths.add( handlePost( item, postDir ))
 		
 	} else if( postType == 'page' ){
 		// not supported
 	}
 }
 
+generateIndex( postPaths, postDir )
+
 println 'Done.'
+
+def generateIndex( posts, dir ){
+	println 'Generating index file...'
+	
+	def indexFile = new File( dir, 'postindex.md' )
+	
+	indexFile << "---\n"
+	indexFile << "title: Post Index\n"
+	indexFile << "layout: default\n"	
+	indexFile << "---\n\n"
+	
+	indexFile << '# Posts #\n\n'
+	
+	posts.each { post->
+		indexFile << "* [${post.title}](${post.file})\n"
+	}
+}
 
 def handleAttachment( item, dir ){
 	def url = item.'wp:attachment_url'?.text()
@@ -72,6 +93,8 @@ def handlePost( item, dir ){
 		
 		println 'Done.'
 	}
+	
+	return [ title:item.title, file:postFile.name ]
 }
 
 
