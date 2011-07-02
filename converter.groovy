@@ -31,7 +31,8 @@ println 'Done.'
 def generateIndex( posts, dir ){
 	println 'Generating index file...'
 	
-	def indexFile = new File( dir, 'postindex.md' )
+	def indexFile = new File( dir.parent as String, 'postindex.md' )
+	if(indexFile.exists()) indexFile.delete()
 	
 	indexFile << "---\n"
 	indexFile << "title: Post Index\n"
@@ -41,7 +42,9 @@ def generateIndex( posts, dir ){
 	indexFile << '# Posts #\n\n'
 	
 	posts.each { post->
-		indexFile << "* [${post.title}](${post.file})\n"
+		def path = post.file.replaceAll(post.date,post.date.replaceAll('-','/')).replace('.md','.html')
+		path = path[0..(path.indexOf('-')-1)] + '/' + path[(path.indexOf('-')+1)..-1]
+		indexFile << "* [${post.title}](${path})\n"
 	}
 }
 
@@ -94,7 +97,7 @@ def handlePost( item, dir ){
 		println 'Done.'
 	}
 	
-	return [ title:item.title, file:postFile.name ]
+	return [ title:item.title, file:postFile.name, date:date ]
 }
 
 
