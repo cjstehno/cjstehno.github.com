@@ -1,3 +1,1 @@
-My project overview site
-
-Based on the template: Read Only by [HTML5 UP](html5up.net) | @n33co - Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+This is my personal web site... nothing to see here.
